@@ -17,7 +17,7 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         shoppingList = new ShoppingList();
-        seedShoppingList(); // testovací data
+        //seedShoppingList(); // testovací data
 
         initMenu(); // volat před setVisible(true)
         initGui(); // volat před setVisible(true)
@@ -34,6 +34,19 @@ public class MainFrame extends JFrame {
             NewItemDialog dialog = new NewItemDialog(this);
         });
         menu1.add(menuNewItem);
+
+        JMenuItem menuNewItem2 = new JMenuItem("Dialog ukázka 2");
+        menuNewItem2.addActionListener(e -> {
+            JDialog dialog = new JDialog();
+            JPanel panel = new JPanel();
+            panel.add(new JLabel("Nějaký text"));
+            panel.add(new JTextField(20));
+            panel.add(new JButton("Tlačítko"));
+            dialog.add(panel);
+            dialog.pack();
+            dialog.setVisible(true);
+        });
+        menu1.add(menuNewItem2);
 
         setJMenuBar(bar);
     }
@@ -73,7 +86,11 @@ public class MainFrame extends JFrame {
         String[] colNames = new String[] {"Col1", "Col2", "Col3"};
         JTable table = new JTable(data, colNames);*/
         tableModel = new TableModel(shoppingList);
-
+        shoppingList.addActionListener(e -> {
+            if(e.getID() != 1)
+                return;
+            tableModel.fireTableDataChanged();
+        });
         JTable table = new JTable();
         table.setModel(tableModel);
 
@@ -83,8 +100,9 @@ public class MainFrame extends JFrame {
 
         return panelCenter;
     }
-    public void addNewItem(){
+    public void addNewItem(ShoppingItem newItem){
         System.out.println("nová položka");
+        shoppingList.addItem(newItem);
     }
     private void seedShoppingList(){
         shoppingList.getItems().add(new ShoppingItem("Máslo",53,2));

@@ -1,10 +1,17 @@
 package cz.uhk.gui;
 
+import cz.uhk.models.ShoppingItem;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewItemDialog extends JDialog {
     private MainFrame parent;
+
+    private JTextField inputName, inputPrice, inputCount;
+
     public NewItemDialog(MainFrame parent){
         super(parent, "Zadejte novou položku", true);
         this.parent = parent;
@@ -17,13 +24,16 @@ public class NewItemDialog extends JDialog {
         JPanel mainPanel = new JPanel(new GridLayout(4,2));
 
         mainPanel.add(new JLabel("Název"));
-        mainPanel.add(new JTextField(15));
+        inputName = new JTextField(15);
+        mainPanel.add(inputName);
 
         mainPanel.add(new JLabel("Cena"));
-        mainPanel.add(new JTextField(15));
+        inputPrice = new JTextField(15);
+        mainPanel.add(inputPrice);
 
         mainPanel.add(new JLabel("Počet"));
-        mainPanel.add(new JTextField(15));
+        inputCount = new JTextField(15);
+        mainPanel.add(inputCount);
 
         mainPanel.add(new JPanel());// prázdná pozice
 
@@ -31,13 +41,49 @@ public class NewItemDialog extends JDialog {
         mainPanel.add(btnOk);
 
         btnOk.addActionListener(e -> {
-            // TODO validace
+            var validationMessages = validateInputs();
+            if(validationMessages.size()>0){
+                StringBuilder errorMsg = new StringBuilder();
+                for (String s : validationMessages) {
+                    errorMsg.append(s).append("\n");
+                }
+                JOptionPane.showMessageDialog(this,
+                        errorMsg.toString(),
+                        "Chyba vstupu",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             System.out.println("validace nové položky OK");
-            parent.addNewItem();
+
+            double price = Double.parseDouble(inputPrice.getText().trim());
+            int count = Integer.parseInt(inputCount.getText().trim());
+
+            ShoppingItem newItem = new ShoppingItem(
+                    inputName.getText(),
+                    price,
+                    count
+                    );
+            parent.addNewItem(newItem);
             dispose(); // zahodíme dialog
         });
-
-
         add(mainPanel);
+    }
+    private List<String> validateInputs(){
+        List<String> errors = new ArrayList<>();
+        if(inputName.getText().length()<1){
+            errors.add("Název je povinný");
+        }
+        if(inputPrice.getText().length()<1){
+            errors.add("Cena je povinná");
+        }
+        else{
+            try{
+                double price = Double.parseDouble(inputPrice.getText().trim());
+            }catch (NumberFormatException e){
+                errors.add("Cena je ve špatném formátu");
+            }
+        }
+        //TODO validovat i počet
+        return errors;
     }
 }
