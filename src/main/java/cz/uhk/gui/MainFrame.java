@@ -1,5 +1,6 @@
 package cz.uhk.gui;
 
+import cz.uhk.models.FileOperations;
 import cz.uhk.models.ShoppingItem;
 import cz.uhk.models.ShoppingList;
 import cz.uhk.models.TableModel;
@@ -10,13 +11,15 @@ import java.awt.*;
 public class MainFrame extends JFrame {
     private ShoppingList shoppingList;
     private TableModel tableModel;
+    private FileOperations fileOperations;
 
-    public MainFrame(int width, int height){
+    public MainFrame(int width, int height, FileOperations fileOperations){
         super("PRO1 2023");
+        this.fileOperations = fileOperations;
         setSize(width, height);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        shoppingList = new ShoppingList();
+        shoppingList = fileOperations.load();   // načtu data ze souboru
         //seedShoppingList(); // testovací data
 
         initMenu(); // volat před setVisible(true)
@@ -47,6 +50,13 @@ public class MainFrame extends JFrame {
             dialog.setVisible(true);
         });
         menu1.add(menuNewItem2);
+
+        JMenuItem saveToFileItem = new JMenuItem("Uložit do souboru");
+        saveToFileItem.addActionListener(e -> {
+            System.out.println("save to file clicked");
+            fileOperations.write(shoppingList);
+        });
+        menu1.add(saveToFileItem);
 
         setJMenuBar(bar);
     }
