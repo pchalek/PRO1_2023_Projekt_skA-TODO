@@ -7,11 +7,14 @@ import cz.uhk.models.TableModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.TimeUnit;
 
 public class MainFrame extends JFrame {
     private ShoppingList shoppingList;
     private TableModel tableModel;
     private FileOperations fileOperations;
+
+    private JLabel lblSummaryInfo;
 
     public MainFrame(int width, int height, FileOperations fileOperations){
         super("PRO1 2023");
@@ -26,6 +29,21 @@ public class MainFrame extends JFrame {
         initGui(); // volat před setVisible(true)
 
         setVisible(true);
+
+
+        Runnable refreshDataFromInternet = ()->{
+          try{
+              while (true){
+                  // načtu něco z internetu
+                  System.out.println("načteno");
+                  TimeUnit.SECONDS.sleep(5);
+              }
+          }catch (Exception ex){
+              ex.printStackTrace();
+          }
+        };
+        Thread refreshDataFromInternetThread = new Thread(refreshDataFromInternet);
+        refreshDataFromInternetThread.start();
     }
     private void initMenu(){
         JMenuBar bar = new JMenuBar();
@@ -55,8 +73,32 @@ public class MainFrame extends JFrame {
         saveToFileItem.addActionListener(e -> {
             System.out.println("save to file clicked");
             fileOperations.write(shoppingList);
+            JOptionPane.showMessageDialog(this,
+                    "Seznam úspěšně uložen",
+                    "Ok",
+                    JOptionPane.INFORMATION_MESSAGE);
         });
         menu1.add(saveToFileItem);
+
+        JMenuItem loadFromFileItem = new JMenuItem("Načíst ze souboru");
+        loadFromFileItem.addActionListener(e -> {
+            Runnable loadData = ()->{
+                try{
+                    System.out.println("load from file clicked");
+                    TimeUnit.SECONDS.sleep(5); // simulace toho, že to trvá
+                    shoppingList.setItems(fileOperations.load().getItems());
+                    JOptionPane.showMessageDialog(this,
+                            "Seznam úspěšně načten",
+                            "Ok",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                }
+            };
+            Thread loadDataThread = new Thread(loadData);
+            loadDataThread.start();
+        });
+        menu1.add(loadFromFileItem);
 
         setJMenuBar(bar);
     }
@@ -64,6 +106,7 @@ public class MainFrame extends JFrame {
         JPanel panelMain = new JPanel(new BorderLayout());
         panelMain.add(initNorthPanel(), BorderLayout.NORTH);
         panelMain.add(initCenterPanel(), BorderLayout.CENTER);
+        panelMain.add(initSouthPanel(), BorderLayout.SOUTH);
         add(panelMain);
     }
     private JPanel initNorthPanel(){
@@ -110,6 +153,16 @@ public class MainFrame extends JFrame {
 
         return panelCenter;
     }
+    private JPanel initSouthPanel(){
+        JPanel panel = new JPanel();
+        lblSummaryInfo = new JLabel("Info");
+        shoppingList.addActionListener(e -> {
+            updateSummaryInfo();
+        });
+        panel.add(lblSummaryInfo);
+        updateSummaryInfo();
+        return panel;
+    }
     public void addNewItem(ShoppingItem newItem){
         System.out.println("nová položka");
         shoppingList.addItem(newItem);
@@ -120,5 +173,20 @@ public class MainFrame extends JFrame {
         shoppingList.getItems().add(new ShoppingItem("Pomazánka",25,3));
         shoppingList.getItems().add(new ShoppingItem("Šunka",31,1));
         shoppingList.getItems().add(new ShoppingItem("Sýr",29,1));
+    }
+
+    private void updateSummaryInfo(){
+        StringBuilder text = new StringBuilder();
+        text.append("Počet položek: ");
+        text.append(shoppingList.getItems().stream().count());
+
+        text.append(", Celková počet ks: ");
+        int countSum = 0;
+        for (ShoppingItem item :
+                shoppingList.getItems()) {
+            countSum += item.getPieces();
+        }
+        text.append(countSum);
+        lblSummaryInfo.setText(text.toString());
     }
 }

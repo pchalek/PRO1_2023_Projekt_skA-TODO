@@ -22,6 +22,10 @@ public class ShoppingList {
     public List<ShoppingItem> getItems() {
         return items;
     }
+    public void setItems(List<ShoppingItem> items){
+        this.items = items;
+        raiseEventItemsChanged();
+    }
     public String getName() {
         return name;
     }

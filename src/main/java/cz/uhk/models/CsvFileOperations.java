@@ -2,6 +2,8 @@ package cz.uhk.models;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CsvFileOperations implements FileOperations{
     private final static String FILE_NAME = "./shoppingList.csv";
@@ -10,6 +12,9 @@ public class CsvFileOperations implements FileOperations{
     @Override
     public ShoppingList load() {
         //TODO load from file - 25.4.
+
+        List<ShoppingItem> polozkyTemp = new ArrayList<>();
+        polozkyTemp.add(new ShoppingItem("dasda",10,1));
 
         return new ShoppingList();
     }
