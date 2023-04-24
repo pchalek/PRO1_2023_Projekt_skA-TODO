@@ -76,11 +76,19 @@ public class NewItemDialog extends JDialog {
         if(inputPrice.getText().length()<1){
             errors.add("Cena je povinná");
         }
+        if(inputCount.getText().length()<1){
+            errors.add("Pocet je povinný");
+        }
         else{
             try{
                 double price = Double.parseDouble(inputPrice.getText().trim());
             }catch (NumberFormatException e){
                 errors.add("Cena je ve špatném formátu");
+            }
+            try {
+                int count = Integer.parseInt(inputCount.getText().trim());
+            }catch (NumberFormatException e){
+                errors.add("Pocet je ve špatném formátu");
             }
         }
         //TODO validovat i počet
