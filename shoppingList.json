@@ -1,0 +1,29 @@
+{
+  "name": "Seznam",
+  "items": [
+    {
+      "name": "aa",
+      "price": 11.0,
+      "pieces": 11,
+      "bought": false
+    },
+    {
+      "name": "bb",
+      "price": 22.0,
+      "pieces": 22,
+      "bought": false
+    },
+    {
+      "name": "cc",
+      "price": 33.0,
+      "pieces": 33,
+      "bought": false
+    },
+    {
+      "name": "dd",
+      "price": 44.0,
+      "pieces": 44,
+      "bought": false
+    }
+  ]
+}

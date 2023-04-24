@@ -48,7 +48,9 @@ public class MainFrame extends JFrame {
     private void initMenu(){
         JMenuBar bar = new JMenuBar();
         JMenu menu1 = new JMenu("Seznam");
+        JMenu menu2 = new JMenu("Seznam2");
         bar.add(menu1);
+        bar.add(menu2);
         JMenuItem menuNewItem = new JMenuItem("Nová položka");
         menuNewItem.addActionListener(e -> {
             System.out.println("clicked new item");
